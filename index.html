@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8fd6f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Đảo của Tuấn">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+<title>Đảo của Tuấn</title>
+<style>
+:root {
+  --sky: #bfe9ff; --sky-2: #eefaff;
+  --grass: #9ad977; --grass-d: #6fb84f;
+  --sand: #f6e2a6; --ink: #1d2b3a; --muted: #55687a;
+  --card: #ffffff; --gold: #ffb703; --gold-d: #d98c00;
+  --yellow: #ffd166; --yellow-d: #d9a32b;
+  --blue: #9bd3ff; --blue-d: #4a90c8;
+  --pink: #ffb3c6; --pink-d: #d9708f;
+  --line: #d6e6f2;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: "Be Vietnam Pro", -apple-system, system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--sky-2) 0%, var(--sky) 100%);
+  font-size: 18px; line-height: 1.5;
+  padding: env(safe-area-inset-top, 0px) max(14px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(14px, env(safe-area-inset-left, 0px));
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.app { max-width: 960px; margin: 0 auto; padding: 10px 0 40px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 2px 14px; }
+.title { font-family: Fredoka, "Be Vietnam Pro", sans-serif; font-weight: 700; font-size: 30px; margin: 0; }
+.coins {
+  background: #fff; border-radius: 999px; padding: 8px 16px; font-weight: 800; font-size: 20px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .08); white-space: nowrap;
+}
+.back {
+  min-height: 52px; padding: 0 18px; border-radius: 16px; border: 0; background: #fff;
+  font-weight: 800; box-shadow: 0 4px 0 rgba(0, 0, 0, .1);
+}
+/* Home: the island with three places */
+.island {
+  border-radius: 32px; padding: 22px 16px 26px;
+  background: linear-gradient(180deg, var(--grass) 0%, var(--grass-d) 100%);
+  box-shadow: inset 0 -14px 0 rgba(0, 0, 0, .08);
+}
+.places { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .places { grid-template-columns: repeat(3, 1fr); } }
+.place {
+  min-height: 196px; border: 0; border-radius: 18px; padding: 18px; text-align: left;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, .14);
+}
+.place:active { transform: translateY(4px); box-shadow: 0 4px 0 rgba(0, 0, 0, .14); }
+.place .emoji { font-size: 52px; line-height: 1; }
+.place .name { font-family: Fredoka, sans-serif; font-weight: 700; font-size: 26px; }
+.place .sub { font-size: 17px; font-weight: 600; color: var(--muted); }
+.p-quest { background: var(--yellow); }
+.p-photo { background: var(--blue); }
+.p-base { background: var(--pink); }
+.parent-link { text-align: center; margin-top: 18px; }
+.parent-link button { background: none; border: 0; color: #2d5f7a; text-decoration: underline; min-height: 48px; font-size: 16px; }
+/* Screens */
+.screen { display: none; }
+.screen.on { display: block; }
+.card { background: var(--card); border-radius: 22px; padding: 20px; margin-bottom: 16px; box-shadow: 0 6px 0 rgba(0, 0, 0, .06); }
+h2 { font-family: Fredoka, sans-serif; font-size: 28px; margin: 0 0 10px; }
+.hint { color: var(--muted); margin: 0 0 14px; font-size: 17px; }
+.empty { color: var(--muted); text-align: center; padding: 22px 8px; font-size: 18px; margin: 0; }
+.task {
+  display: flex; align-items: center; gap: 14px; min-height: 74px; padding: 12px 14px; margin-bottom: 10px;
+  border-radius: 16px; border: 2px solid var(--line); background: #fff;
+}
+button.task { width: 100%; text-align: left; cursor: pointer; }
+.task .mark {
+  width: 34px; height: 34px; border-radius: 10px; border: 3px solid var(--grass-d); flex: none;
+  display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 20px;
+}
+.task.done .mark { background: var(--grass-d); }
+.task .txt { flex: 1; font-size: 21px; font-weight: 600; word-break: break-word; }
+.task.done { background: #eaf8dc; border-color: var(--grass-d); }
+.task.done .txt { color: var(--muted); text-decoration: line-through; }
+.task .tag { font-size: 22px; }
+.cheer { font-family: Fredoka, sans-serif; font-size: 24px; color: var(--gold-d); text-align: center; margin: 14px 0 0; min-height: 1.4em; }
+.big {
+  width: 100%; min-height: 74px; border: 0; border-radius: 20px; font-size: 22px; font-weight: 800; color: #fff;
+  background: var(--blue-d); box-shadow: 0 6px 0 #2f6a97;
+}
+.big:active { transform: translateY(4px); box-shadow: 0 2px 0 #2f6a97; }
+.big.pink { background: var(--pink-d); box-shadow: 0 6px 0 #a64f6a; }
+.big.gold { background: var(--gold); color: var(--ink); box-shadow: 0 6px 0 var(--gold-d); }
+.big:disabled { opacity: .5; }
+.photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
+@media (min-width: 640px) { .photos { grid-template-columns: repeat(3, 1fr); } }
+.photos img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 16px; background: var(--line); }
+.msg { min-height: 1.4em; color: var(--muted); font-size: 17px; margin: 10px 0 0; }
+.msg.bad { color: #b03a55; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); }
+.base-stars { font-family: Fredoka, sans-serif; font-size: 72px; font-weight: 700; text-align: center; color: var(--gold-d); margin: 4px 0; }
+.track { height: 26px; border-radius: 16px; background: var(--line); overflow: hidden; }
+.track > div { height: 100%; width: 0%; background: var(--gold); transition: width .4s; }
+.row { display: flex; gap: 10px; margin-top: 10px; }
+.row input[type="text"], .row input[type="password"] {
+  flex: 1; min-height: 56px; border-radius: 14px; border: 2px solid var(--line); padding: 10px 14px; background: #fff; font-size: 18px;
+}
+.row button { min-height: 56px; padding: 0 18px; border-radius: 14px; border: 0; background: var(--grass-d); color: #fff; font-weight: 800; }
+.parent-list { margin-top: 12px; }
+.parent-list .task { min-height: 56px; }
+.del { min-height: 44px; min-width: 44px; border: 0; border-radius: 22px; background: #f3e1e6; color: #8a2b45; font-weight: 800; font-size: 18px; }
+.stack { display: grid; gap: 10px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Home: the island -->
+  <section class="screen on" id="home" aria-label="Đảo của Tuấn">
+    <div class="topbar">
+      <h1 class="title">Đảo của Tuấn</h1>
+      <div class="coins" aria-live="polite"><span id="coins">0</span> ⭐</div>
+    </div>
+    <div class="island">
+      <div class="places">
+        <button class="place p-quest" type="button" data-go="quest">
+          <span class="emoji" aria-hidden="true">📘</span>
+          <span><span class="name">Bảng nhiệm vụ</span><br><span class="sub" id="subQuest">Chưa có nhiệm vụ</span></span>
+        </button>
+        <button class="place p-photo" type="button" data-go="photo">
+          <span class="emoji" aria-hidden="true">📷</span>
+          <span><span class="name">Bến chụp bài</span><br><span class="sub" id="subPhoto">Chụp bài làm</span></span>
+        </button>
+        <button class="place p-base" type="button" data-go="base">
+          <span class="emoji" aria-hidden="true">🏠</span>
+          <span><span class="name">Căn nhà của con</span><br><span class="sub" id="subBase">0 sao</span></span>
+        </button>
+      </div>
+    </div>
+    <div class="parent-link"><button type="button" data-go="parent">Dành cho bố mẹ</button></div>
+  </section>
+
+  <!-- Quest board -->
+  <section class="screen" id="quest" aria-label="Bảng nhiệm vụ">
+    <div class="topbar">
+      <h2>Bảng nhiệm vụ</h2>
+      <button class="back" type="button" data-go="home">Về đảo</button>
+    </div>
+    <div class="card">
+      <p class="hint">Làm xong một việc là được một sao. Sao không bao giờ mất.</p>
+      <div id="taskList"></div>
+      <p class="cheer" id="cheer"></p>
+    </div>
+  </section>
+
+  <!-- Photo dock -->
+  <section class="screen" id="photo" aria-label="Bến chụp bài">
+    <div class="topbar">
+      <h2>Bến chụp bài</h2>
+      <button class="back" type="button" data-go="home">Về đảo</button>
+    </div>
+    <div class="card">
+      <p class="hint">Chụp từng bài làm. Mỗi lần một ảnh.</p>
+      <label class="big pink" for="shot" style="display:flex;align-items:center;justify-content:center;cursor:pointer">Chụp bài</label>
+      <input id="shot" class="visually-hidden" type="file" accept="image/*" capture="environment">
+      <p class="msg" id="shotMsg"></p>
+      <div class="photos" id="photoList"></div>
+    </div>
+  </section>
+
+  <!-- Base: stars -->
+  <section class="screen" id="base" aria-label="Căn nhà của con">
+    <div class="topbar">
+      <h2>Căn nhà của con</h2>
+      <button class="back" type="button" data-go="home">Về đảo</button>
+    </div>
+    <div class="card">
+      <div class="base-stars" id="bigStars">0</div>
+      <p class="hint" style="text-align:center" id="baseNote"></p>
+      <div class="track" aria-hidden="true"><div id="milestoneBar"></div></div>
+      <p class="hint" style="text-align:center;margin-top:12px" id="milestone"></p>
+    </div>
+  </section>
+
+  <!-- Parent -->
+  <section class="screen" id="parent" aria-label="Dành cho bố mẹ">
+    <div class="topbar">
+      <h2>Bố mẹ</h2>
+      <button class="back" type="button" data-go="home">Về đảo</button>
+    </div>
+    <div class="card" id="pinBox"></div>
+    <div id="parentBox" hidden>
+      <div class="card">
+        <h2 style="font-size:22px">Thêm nhiệm vụ</h2>
+        <div class="row">
+          <input id="newTask" type="text" placeholder="Ví dụ: Toán trang 12" autocomplete="off">
+          <button id="addTask" type="button">Thêm</button>
+        </div>
+        <p class="msg" id="taskMsg"></p>
+        <div class="parent-list" id="parentTasks"></div>
+      </div>
+      <div class="card">
+        <h2 style="font-size:22px">Quản lý</h2>
+        <div class="stack">
+          <button class="big gold" id="clearDone" type="button">Gỡ các nhiệm vụ đã xong</button>
+          <button class="big" id="clearPhotos" type="button">Xóa hết ảnh đã chụp</button>
+          <button class="big pink" id="resetStars" type="button">Đặt lại sao về 0</button>
+          <button class="big" id="changePin" type="button" style="background:#7a8b99;box-shadow:0 6px 0 #56656f">Đổi mật khẩu</button>
+        </div>
+        <p class="msg" id="manageMsg"></p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const K = { tasks: "tuan2.tasks", photos: "tuan2.photos", stars: "tuan2.stars", pin: "tuan2.pin" };
+  const $ = (s) => document.querySelector(s);
+
+  // Browser storage can be blocked or cleared. Each read and write is wrapped.
+  function read(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+
+  // tasks: { id, text, done, starred }. A star is awarded once per task and never taken back.
+  let tasks = read(K.tasks, []);
+  let photos = read(K.photos, []);
+  let stars = read(K.stars, 0);
+  let unlocked = false;
+
+  function saveTasks() { return write(K.tasks, tasks); }
+  function saveStars() { return write(K.stars, stars); }
+
+  function show(id) {
+    if (!document.getElementById(id)) id = "home";
+    document.querySelectorAll(".screen").forEach((s) => s.classList.toggle("on", s.id === id));
+    history.replaceState(null, "", "#" + id);
+    window.scrollTo(0, 0);
+    render(id);
+  }
+  function render(id) {
+    renderCoins();
+    if (id === "home") renderHome();
+    if (id === "quest") renderQuest();
+    if (id === "photo") renderPhotos();
+    if (id === "base") renderBase();
+    if (id === "parent") renderParent();
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-go]");
+    if (b) show(b.dataset.go);
+  });
+
+  function renderCoins() { $("#coins").textContent = stars; }
+
+  function renderHome() {
+    const open = tasks.filter((t) => !t.done).length;
+    $("#subQuest").textContent = !tasks.length ? "Chưa có nhiệm vụ" : open ? "Còn " + open + " việc" : "Hôm nay xong hết!";
+    $("#subPhoto").textContent = photos.length ? photos.length + " bài đã chụp" : "Chụp bài làm";
+    $("#subBase").textContent = stars + " sao";
+  }
+
+  function renderQuest() {
+    const box = $("#taskList");
+    box.textContent = "";
+    if (!tasks.length) {
+      box.innerHTML = '<p class="empty">Chưa có nhiệm vụ. Bố mẹ sẽ thêm nhiệm vụ hôm nay.</p>';
+      $("#cheer").textContent = "";
+      return;
+    }
+    tasks.forEach((t) => {
+      // A button with checkbox semantics, not a label: one tap gives exactly one change.
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "task" + (t.done ? " done" : "");
+      row.setAttribute("role", "checkbox");
+      row.setAttribute("aria-checked", t.done ? "true" : "false");
+      const mark = document.createElement("span");
+      mark.className = "mark";
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = t.done ? "✓" : "";
+      const txt = document.createElement("span");
+      txt.className = "txt";
+      txt.textContent = t.text;
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.setAttribute("aria-hidden", "true");
+      tag.textContent = t.starred ? "⭐" : "";
+      row.addEventListener("click", () => toggleTask(t.id));
+      row.append(mark, txt, tag);
+      box.append(row);
+    });
+    const allDone = tasks.every((t) => t.done);
+    $("#cheer").textContent = allDone ? "Làm xong hết rồi! Giỏi lắm." : "";
+  }
+
+  // Look the task up by id on every tap, so a stale reference can never award a star twice.
+  function toggleTask(id) {
+    const cur = tasks.find((x) => x.id === id);
+    if (!cur) return;
+    cur.done = !cur.done;
+    if (cur.done && !cur.starred) { cur.starred = true; stars += 1; saveStars(); }
+    saveTasks();
+    renderQuest();
+    renderCoins();
+  }
+
+  // Shrink a photo to about 900 px so several fit in local storage.
+  function shrink(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const s = Math.min(1, 900 / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.naturalWidth * s);
+        c.height = Math.round(img.naturalHeight * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL("image/jpeg", 0.8));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("read")); };
+      img.src = url;
+    });
+  }
+
+  function renderPhotos() {
+    const box = $("#photoList");
+    box.textContent = "";
+    photos.forEach((p) => {
+      const img = document.createElement("img");
+      img.src = p.dataUrl;
+      img.alt = "Bài đã chụp";
+      box.append(img);
+    });
+  }
+
+  $("#shot").addEventListener("change", async (e) => {
+    const f = e.target.files[0];
+    e.target.value = "";
+    if (!f) return;
+    const msg = $("#shotMsg");
+    msg.className = "msg";
+    msg.textContent = "Đang lưu bài…";
+    try {
+      const dataUrl = await shrink(f);
+      const next = [{ id: String(Date.now()), dataUrl }].concat(photos);
+      if (write(K.photos, next)) {
+        photos = next;
+        msg.textContent = "Đã lưu bài. Chụp tiếp nếu còn bài khác.";
+        renderPhotos();
+      } else {
+        msg.textContent = "Bộ nhớ đầy. Nhờ bố mẹ xóa bớt ảnh cũ.";
+        msg.className = "msg bad";
+      }
+    } catch (err) {
+      msg.textContent = "Không đọc được ảnh. Chụp lại nhé.";
+      msg.className = "msg bad";
+    }
+  });
+
+  function renderBase() {
+    $("#bigStars").textContent = stars;
+    const next = (Math.floor(stars / 5) + 1) * 5;
+    const into = stars % 5;
+    $("#baseNote").textContent = stars === 0 ? "Làm xong một việc là có sao đầu tiên." : "Sao của con đã được cất giữ ở đây.";
+    $("#milestoneBar").style.width = (into / 5 * 100) + "%";
+    $("#milestone").textContent = "Còn " + (next - stars) + " sao nữa đến mốc " + next + ".";
+  }
+
+  // Parent PIN is stored as a SHA-256 hash, never as plain text.
+  async function hash(s) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("tuan2:" + s));
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  function renderParent() {
+    const pinBox = $("#pinBox");
+    const parentBox = $("#parentBox");
+    if (!unlocked) {
+      parentBox.hidden = true;
+      pinBox.innerHTML = "";
+      const stored = read(K.pin, null);
+      const h = document.createElement("h2");
+      h.style.fontSize = "22px";
+      h.textContent = stored ? "Nhập mật khẩu bố mẹ" : "Tạo mật khẩu bố mẹ (ít nhất 4 ký tự)";
+      const row = document.createElement("div");
+      row.className = "row";
+      const input = document.createElement("input");
+      input.type = "password";
+      input.inputMode = "numeric";
+      input.autocomplete = "off";
+      input.placeholder = "Mật khẩu";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = stored ? "Mở" : "Lưu";
+      const msg = document.createElement("p");
+      msg.className = "msg";
+      row.append(input, btn);
+      pinBox.append(h, row, msg);
+      btn.addEventListener("click", async () => {
+        const v = input.value.trim();
+        if (!stored) {
+          if (v.length < 4) { msg.textContent = "Cần ít nhất 4 ký tự."; msg.className = "msg bad"; return; }
+          write(K.pin, await hash(v));
+          unlocked = true;
+          renderParent();
+          return;
+        }
+        if ((await hash(v)) === stored) { unlocked = true; renderParent(); }
+        else { msg.textContent = "Sai mật khẩu."; msg.className = "msg bad"; }
+      });
+      return;
+    }
+    pinBox.innerHTML = "";
+    parentBox.hidden = false;
+    renderParentTasks();
+  }
+
+  function renderParentTasks() {
+    const box = $("#parentTasks");
+    box.textContent = "";
+    tasks.forEach((t) => {
+      const row = document.createElement("div");
+      row.className = "task" + (t.done ? " done" : "");
+      const txt = document.createElement("span");
+      txt.className = "txt";
+      txt.textContent = t.text;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "del";
+      del.textContent = "×";
+      del.setAttribute("aria-label", "Xóa nhiệm vụ " + t.text);
+      del.addEventListener("click", () => {
+        tasks = tasks.filter((x) => x.id !== t.id);
+        saveTasks();
+        renderParentTasks();
+      });
+      row.append(txt, del);
+      box.append(row);
+    });
+  }
+
+  // Two taps for destructive actions, so a stray tap does nothing.
+  function confirmTap(btn, label, action) {
+    let armed = false;
+    let timer = null;
+    btn.addEventListener("click", () => {
+      if (!armed) {
+        armed = true;
+        btn.dataset.label = btn.textContent;
+        btn.textContent = "Bấm lần nữa để xác nhận";
+        timer = setTimeout(() => { armed = false; btn.textContent = btn.dataset.label; }, 4000);
+        return;
+      }
+      clearTimeout(timer);
+      armed = false;
+      btn.textContent = btn.dataset.label;
+      action();
+    });
+  }
+
+  $("#addTask").addEventListener("click", () => {
+    const text = $("#newTask").value.trim();
+    const msg = $("#taskMsg");
+    if (!text) { msg.textContent = "Gõ tên nhiệm vụ trước đã."; msg.className = "msg bad"; return; }
+    tasks.push({ id: String(Date.now()), text, done: false, starred: false });
+    saveTasks();
+    $("#newTask").value = "";
+    msg.textContent = "Đã thêm: " + text;
+    msg.className = "msg";
+    renderParentTasks();
+  });
+  $("#newTask").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#addTask").click(); });
+
+  confirmTap($("#clearDone"), "Gỡ các nhiệm vụ đã xong", () => {
+    tasks = tasks.filter((t) => !t.done);
+    saveTasks();
+    $("#manageMsg").textContent = "Đã gỡ các nhiệm vụ đã xong. Sao vẫn giữ nguyên.";
+    renderParentTasks();
+  });
+  confirmTap($("#clearPhotos"), "Xóa hết ảnh", () => {
+    photos = [];
+    write(K.photos, photos);
+    $("#manageMsg").textContent = "Đã xóa hết ảnh.";
+  });
+  confirmTap($("#resetStars"), "Đặt lại sao", () => {
+    stars = 0;
+    saveStars();
+    tasks = tasks.map((t) => Object.assign({}, t, { starred: false }));
+    saveTasks();
+    $("#manageMsg").textContent = "Đã đặt lại sao về 0.";
+    renderCoins();
+  });
+  $("#changePin").addEventListener("click", () => {
+    try { localStorage.removeItem(K.pin); } catch (e) {}
+    unlocked = false;
+    $("#manageMsg").textContent = "";
+    renderParent();
+  });
+
+  show((location.hash || "#home").slice(1));
+})();
+</script>
+</body>
+</html>
